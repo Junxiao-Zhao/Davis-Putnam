@@ -50,11 +50,14 @@ def categ2(nodes: list, adj: defaultdict, num_steps: int):
 def categ3(nodes: list, adj: defaultdict, num_steps: int):
     proposition = "~At({},%d) V Has({},%d)\n"
     propos = list()  # store the propositions
+    treasure_node = defaultdict(
+        list)  # store the nodes containing each treasure
 
     # format and add proposition
     for n in nodes:
         for t in adj[n]['TREASURES']:
             propos.append(proposition.format(n, t))
+            treasure_node[t].append(n)
 
     # duplicate and replace the position
     outputs = list()
@@ -62,7 +65,7 @@ def categ3(nodes: list, adj: defaultdict, num_steps: int):
         for p in propos:
             outputs.append(p % (i, i))
 
-    return outputs
+    return outputs, treasure_node
 
 
 # If the player has treasure T at time I-1,
@@ -75,11 +78,38 @@ def categ4(treasures: list, num_steps: int):
     for t in treasures:
         propos.append(proposition.format(t=t))
 
-    # # duplicate and replace the position
+    # duplicate and replace the position
     outputs = list()
     for i in range(num_steps):
         for p in propos:
             outputs.append(p % (i, i + 1))
+
+    return outputs
+
+
+# Let M1 ... Mq be the nodes that supply treasure T.
+# If the player does not have treasure T at time I-1 and has T at time I,
+# then at time I they must be at one of the nodes M1 ... Mq
+def categ5(treasures: list, treasure_node: defaultdict, num_steps: int):
+    proposition_l = "Has({t},%d) V ~Has({t},%d)"  # left part Has
+    proposition_r = " V At({},%d)"  # right part At
+    propos = list()  # store the propositions
+
+    # format and add proposition
+    for t in treasures:
+        propos.append(proposition_l.format(t=t))
+        for n in treasure_node[t]:
+            propos.append(proposition_r.format(n))
+        propos[-1] += '\n'
+
+    # duplicate and replace the position
+    outputs = list()
+    for i in range(num_steps):
+        for j, p in enumerate(propos):
+            if (j % 2 == 0):
+                outputs.append(p % (i, i + 1))
+            else:
+                outputs.append(p % (i + 1))
 
     return outputs
 
@@ -128,7 +158,10 @@ if __name__ == "__main__":
 
     outputs += categ1(nodes, num_steps)
     outputs += categ2(nodes, adj, num_steps)
-    outputs += categ3(nodes, adj, num_steps)
+    output, treasure_node = categ3(nodes, adj, num_steps)
+    outputs += output
     outputs += categ4(treasures, num_steps)
+    outputs += categ5(treasures, treasure_node, num_steps)
 
     write_front("FrontEndOutput.txt", outputs)
+    # print(treasure_node)
