@@ -1,71 +1,111 @@
 # read the input file
 def read_dp(path: str):
+
+    clauses = list()  # store clauses
+    atoms = dict()  # store atoms
+    remains = list()
+
     try:
         f = open(path)
         contents = f.readlines()
         f.close()
 
-    except Exception:
-        return list(), dict(), list()
+        i = 0
+        while contents[i][0] != "0":
+            each_line = contents[i].strip("\n").split()
+            clauses.append(each_line)
+            [atoms.setdefault(abs(int(a)), None)
+             for a in each_line]  # store atoms in each clause
+            i += 1
 
-    clauses = list()  # store clauses
-    atoms = dict()  # store atoms
+        remains = contents[i:]  # ignored part
+        clauses.sort(key=lambda x: len(x))  # sort by length
 
-    i = 0
-    while contents[i][0] != "0":
-        each_line = contents[i].strip("\n").split()
-        clauses.append(each_line)
-        [atoms.setdefault(abs(int(a)), None)
-         for a in each_line]  # store atoms in each clause
-        i += 1
-
-    remains = contents[i + 1:]  # ignored part after 0
+    except Exception as e:
+        print(e)
 
     return clauses, atoms, remains
 
 
+# write the output file
+def write_dp(path: str, atoms: dict, remains: list, success: bool):
+    try:
+        f = open(path, "w", encoding="utf-8-sig")
+
+        # write solution if exits
+        if success:
+            f.writelines([
+                " ".join([str(k), str(atoms[k])[0], "\n"])
+                for k in atoms.keys()
+            ])
+        # write the remains
+        f.writelines(remains)
+
+        f.close()
+
+    except Exception as e:
+        print(e)
+
+
 # Davis-Putnam
-def davis_putnam(clauses: list, atoms: dict, cur: int):
+def davis_putnam(clauses: list, atoms: dict):
 
-    success = True
-    for c in clauses:
-        base = False
+    i = 0
+    while i < len(clauses):
+        next_pos = True
 
-        for literal in c:
-
+        for j in range(len(clauses[i])):
             # get the value of this atom
-            val = int(literal)
+            val = int(clauses[i][j])
             if val >= 0:
                 a = atoms[val]
             else:
                 a = atoms[-val]
                 a = None if a is None else not a
 
-            base = base or a if a is not None else None  # check the result of this literal
-            # break if missing value or fail
-            if base or base is None:
+            # remove the False literal
+            if a is False:
+                clauses[i].pop(j)
+                break
+            # remove the True clause
+            elif a:
+                clauses.pop(i)
+                next_pos = False
                 break
 
-        # stop if fail
-        if base is False:
+        # pure literal then failed
+        if next_pos and len(clauses[i]) == 0:
             return False
 
-        success &= base is True
+        if next_pos:
+            i += 1
 
-    # find solution
-    if success:
-        return True
-
-    atoms[cur + 1] = True
-    if davis_putnam(clauses, atoms, cur + 1):
+    # empty clauses then True
+    if len(clauses) == 0:
         return True
     else:
-        atoms[cur + 1] = False
-        return davis_putnam(clauses, atoms, cur + 1)
+        # set an atom to True
+        clauses.sort(key=lambda x: len(x))
+        val = int(clauses[0][0])
+        atoms[abs(val)] = True if val >= 0 else False
+
+        # success
+        if davis_putnam([c.copy() for c in clauses], atoms):
+            return True
+        # fail, try set to False
+        else:
+            atoms[abs(val)] = not atoms[abs(val)]
+
+            # success
+            if davis_putnam([c.copy() for c in clauses], atoms):
+                return True
+            # fail, back to previous state
+            else:
+                atoms[abs(val)] = None
+                return False
 
 
 if __name__ == "__main__":
-    clauses, atoms, remains = read_dp("dp_input.txt")
-    atoms[1] = True
-    davis_putnam(clauses, atoms, 1)
-    print(atoms)
+    clauses, atoms, remains = read_dp("dp_input.txt")  # read
+    sol = davis_putnam([c.copy() for c in clauses], atoms)  # solve
+    write_dp("dp_output.txt", atoms, remains, sol)  # write
