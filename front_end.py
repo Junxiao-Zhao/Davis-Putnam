@@ -3,7 +3,7 @@ from collections import defaultdict
 
 
 # The player is only at one place at a time
-def categ1(nodes: list, adj: defaultdict, num_steps: int):
+def categ1(nodes: list, num_steps: int):
     proposition = "~At({},%d) V ~At({},%d)\n"
     propos = list()  # store the proposition between nodes
 
@@ -17,6 +17,29 @@ def categ1(nodes: list, adj: defaultdict, num_steps: int):
     for i in range(num_steps + 1):
         for p in propos:
             outputs.append(p % (i, i))
+
+    return outputs
+
+
+# The player must move on edges
+def categ2(nodes: list, adj: defaultdict, num_steps: int):
+    proposition_l = "~At({},%d)"  # left part at position i
+    proposition_r = " V At({},%d)"  # right part at position i+1
+    propos = list()  # store the proposition between nodes
+
+    # format and add proposition
+    for n1 in nodes:
+        propos.append(proposition_l.format(n1))
+        for n2 in adj[n1]['NEXT']:
+            propos.append(proposition_r.format(n2))
+        propos[-1] += "\n"
+
+    # duplicate and replace the position
+    outputs = list()
+    for i in range(num_steps):
+        for p in propos:
+            val = i if p[0] == "~" else i + 1
+            outputs.append(p % val)
 
     return outputs
 
@@ -50,4 +73,4 @@ def read_front(path: str):
 
 if __name__ == "__main__":
     nodes, treasures, num_steps, adj = read_front("FrontEndInput.txt")
-    print(categ1(nodes, adj, num_steps))
+    print(categ2(nodes, adj, num_steps))
