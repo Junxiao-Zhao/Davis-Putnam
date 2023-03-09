@@ -87,6 +87,30 @@ def categ4(treasures: list, num_steps: int):
     return outputs
 
 
+# At time 0, the player has none of the treasures
+def categ7(treasures: list):
+    proposition = "¬Has({},0)\n"
+    propos = list()  # store the propositions
+
+    # format and add proposition
+    for t in treasures:
+        propos.append(proposition.format(t))
+
+    return propos
+
+
+# At time K, the player has all the treasures
+def categ8(treasures: list, num_steps: int):
+    proposition = "Has({},%d)\n" % num_steps
+    propos = list()  # store the propositions
+
+    # format and add proposition
+    for t in treasures:
+        propos.append(proposition.format(t))
+
+    return propos
+
+
 # Let M1 ... Mq be the nodes that supply treasure T.
 # If the player does not have treasure T at time I-1 and has T at time I,
 # then at time I they must be at one of the nodes M1 ... Mq
@@ -153,15 +177,17 @@ def write_front(path: str, outputs: list):
 
 
 if __name__ == "__main__":
-    outputs = list()
     nodes, treasures, num_steps, adj = read_front("FrontEndInput.txt")
 
+    outputs = list()
     outputs += categ1(nodes, num_steps)
     outputs += categ2(nodes, adj, num_steps)
     output, treasure_node = categ3(nodes, adj, num_steps)
     outputs += output
     outputs += categ4(treasures, num_steps)
     outputs += categ5(treasures, treasure_node, num_steps)
+    outputs.append("At(START,0)\n")  # The player is at START at time 0
+    outputs += categ7(treasures)
+    outputs += categ8(treasures, num_steps)
 
     write_front("FrontEndOutput.txt", outputs)
-    # print(treasure_node)
