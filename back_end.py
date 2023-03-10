@@ -1,6 +1,4 @@
 import re
-import front_end as fe
-import Davis_Putnam as dp
 
 
 # read the input file
@@ -66,6 +64,4 @@ def main(input_file: str, output_file: str):
 
 
 if __name__ == "__main__":
-    fe.main("FrontEndInput.txt", "FrontEndOutput.txt")
-    dp.main("FrontEndOutput.txt", "BackEndInput.txt")
     main("BackEndInput.txt", "BackEndOutput.txt")
