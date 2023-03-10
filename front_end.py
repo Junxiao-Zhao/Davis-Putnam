@@ -146,7 +146,7 @@ def read_front(path: str):
     adj = defaultdict(dict)  # adjacent list of the graph
 
     try:
-        f = open(path)
+        f = open(path, mode='r', encoding="utf-8-sig")
         contents = f.readlines()
         f.close()
 
