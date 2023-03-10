@@ -1,5 +1,5 @@
 import re
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 
 # The player is only at one place at a time
@@ -87,30 +87,6 @@ def categ4(treasures: list, num_steps: int):
     return outputs
 
 
-# At time 0, the player has none of the treasures
-def categ7(treasures: list):
-    proposition = "¬Has({},0)\n"
-    propos = list()  # store the propositions
-
-    # format and add proposition
-    for t in treasures:
-        propos.append(proposition.format(t))
-
-    return propos
-
-
-# At time K, the player has all the treasures
-def categ8(treasures: list, num_steps: int):
-    proposition = "Has({},%d)\n" % num_steps
-    propos = list()  # store the propositions
-
-    # format and add proposition
-    for t in treasures:
-        propos.append(proposition.format(t))
-
-    return propos
-
-
 # Let M1 ... Mq be the nodes that supply treasure T.
 # If the player does not have treasure T at time I-1 and has T at time I,
 # then at time I they must be at one of the nodes M1 ... Mq
@@ -136,6 +112,30 @@ def categ5(treasures: list, treasure_node: defaultdict, num_steps: int):
                 outputs.append(p % (i + 1))
 
     return outputs
+
+
+# At time 0, the player has none of the treasures
+def categ7(treasures: list):
+    proposition = "~Has({},0)\n"
+    propos = list()  # store the propositions
+
+    # format and add proposition
+    for t in treasures:
+        propos.append(proposition.format(t))
+
+    return propos
+
+
+# At time K, the player has all the treasures
+def categ8(treasures: list, num_steps: int):
+    proposition = "Has({},%d)\n" % num_steps
+    propos = list()  # store the propositions
+
+    # format and add proposition
+    for t in treasures:
+        propos.append(proposition.format(t))
+
+    return propos
 
 
 # read the input file
@@ -166,7 +166,7 @@ def read_front(path: str):
 
 
 # write the output file
-def write_front(path: str, outputs: list):
+def write_front(path: str, outputs):
     try:
         f = open(path, "w", encoding="utf-8-sig")
         f.writelines(outputs)
@@ -176,8 +176,33 @@ def write_front(path: str, outputs: list):
         print(e)
 
 
-if __name__ == "__main__":
-    nodes, treasures, num_steps, adj = read_front("FrontEndInput.txt")
+# translate clauses into Davis-Putnam input format
+def translate(outputs: list):
+    atoms = list()
+
+    # break into atoms
+    for o in outputs:
+        atoms += re.split(" V |~|\n| ", o)
+
+    # remove duplicates
+    atoms = list(OrderedDict.fromkeys(atoms))
+    atoms.remove("")
+
+    output_str = "".join(outputs)
+    translations = ""
+
+    # replace with numbers
+    for i, a in enumerate(atoms):
+        output_str = output_str.replace(a, str(i + 1))
+        translations += str(i + 1) + " " + a + "\n"
+    output_str = output_str.replace(" V ", " ")
+    output_str = output_str.replace("~", "-") + "0\n" + translations
+
+    return output_str
+
+
+def main(input_file: str, output_file: str):
+    nodes, treasures, num_steps, adj = read_front(input_file)
 
     outputs = list()
     outputs += categ1(nodes, num_steps)
@@ -190,4 +215,9 @@ if __name__ == "__main__":
     outputs += categ7(treasures)
     outputs += categ8(treasures, num_steps)
 
-    write_front("FrontEndOutput.txt", outputs)
+    str_out = translate(outputs)
+    write_front(output_file, str_out)
+
+
+if __name__ == "__main__":
+    main("FrontEndInput.txt", "FrontEndOutput.txt")

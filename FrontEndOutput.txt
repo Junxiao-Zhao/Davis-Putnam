@@ -1,46 +1,67 @@
-﻿~At(START,0) V ~At(A,0)
-~At(START,0) V ~At(B,0)
-~At(A,0) V ~At(B,0)
-~At(START,1) V ~At(A,1)
-~At(START,1) V ~At(B,1)
-~At(A,1) V ~At(B,1)
-~At(START,2) V ~At(A,2)
-~At(START,2) V ~At(B,2)
-~At(A,2) V ~At(B,2)
-~At(START,3) V ~At(A,3)
-~At(START,3) V ~At(B,3)
-~At(A,3) V ~At(B,3)
-~At(START,0) V At(A,1) V At(B,1)
-~At(A,0) V At(START,1)
-~At(B,0) V At(START,1)
-~At(START,1) V At(A,2) V At(B,2)
-~At(A,1) V At(START,2)
-~At(B,1) V At(START,2)
-~At(START,2) V At(A,3) V At(B,3)
-~At(A,2) V At(START,3)
-~At(B,2) V At(START,3)
-~At(A,0) V Has(GOLD,0)
-~At(B,0) V Has(WAND,0)
-~At(A,1) V Has(GOLD,1)
-~At(B,1) V Has(WAND,1)
-~At(A,2) V Has(GOLD,2)
-~At(B,2) V Has(WAND,2)
-~At(A,3) V Has(GOLD,3)
-~At(B,3) V Has(WAND,3)
-~Has(GOLD,0) V Has(GOLD,1)
-~Has(WAND,0) V Has(WAND,1)
-~Has(GOLD,1) V Has(GOLD,2)
-~Has(WAND,1) V Has(WAND,2)
-~Has(GOLD,2) V Has(GOLD,3)
-~Has(WAND,2) V Has(WAND,3)
-Has(GOLD,0) V ~Has(GOLD,1) V At(A,1)
-Has(WAND,0) V ~Has(WAND,1) V At(B,1)
-Has(GOLD,1) V ~Has(GOLD,2) V At(A,2)
-Has(WAND,1) V ~Has(WAND,2) V At(B,2)
-Has(GOLD,2) V ~Has(GOLD,3) V At(A,3)
-Has(WAND,2) V ~Has(WAND,3) V At(B,3)
-At(START,0)
-¬Has(GOLD,0)
-¬Has(WAND,0)
-Has(GOLD,3)
-Has(WAND,3)
+﻿-1 -2
+-1 -3
+-2 -3
+-4 -5
+-4 -6
+-5 -6
+-7 -8
+-7 -9
+-8 -9
+-10 -11
+-10 -12
+-11 -12
+-1 5 6
+-2 4
+-3 4
+-4 8 9
+-5 7
+-6 7
+-7 11 12
+-8 10
+-9 10
+-2 13
+-3 14
+-5 15
+-6 16
+-8 17
+-9 18
+-11 19
+-12 20
+-13 15
+-14 16
+-15 17
+-16 18
+-17 19
+-18 20
+13 -15 5
+14 -16 6
+15 -17 8
+16 -18 9
+17 -19 11
+18 -20 12
+1
+-13
+-14
+19
+20
+0
+1 At(START,0)
+2 At(A,0)
+3 At(B,0)
+4 At(START,1)
+5 At(A,1)
+6 At(B,1)
+7 At(START,2)
+8 At(A,2)
+9 At(B,2)
+10 At(START,3)
+11 At(A,3)
+12 At(B,3)
+13 Has(GOLD,0)
+14 Has(WAND,0)
+15 Has(GOLD,1)
+16 Has(WAND,1)
+17 Has(GOLD,2)
+18 Has(WAND,2)
+19 Has(GOLD,3)
+20 Has(WAND,3)
