@@ -216,6 +216,7 @@ def main(input_file: str, output_file: str):
     outputs += categ8(treasures, num_steps)
 
     str_out = translate(outputs)
+    write_front("FrontEndClauses.txt", outputs)
     write_front(output_file, str_out)
 
 

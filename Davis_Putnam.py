@@ -112,4 +112,4 @@ def main(input_file: str, output_file: str):
 
 
 if __name__ == "__main__":
-    main("dp_input.txt", "dp_output.txt")
+    main("FrontEndOutput.txt", "BackEndInput.txt")
