@@ -105,8 +105,8 @@ def categ5(treasures: list, treasure_node: defaultdict, num_steps: int):
     # duplicate and replace the position
     outputs = list()
     for i in range(num_steps):
-        for j, p in enumerate(propos):
-            if (j % 2 == 0):
+        for p in propos:
+            if p[:3] == "Has":
                 outputs.append(p % (i, i + 1))
             else:
                 outputs.append(p % (i + 1))
