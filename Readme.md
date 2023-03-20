@@ -82,5 +82,6 @@ For instance: `Has(GOLD,4)`.
   - Output:
     - The path that solves the problem.
     - Or "NO SOLUTION" if the input indicates that the clauses have no solution.
+    - For example: [BackEndOutput.txt](BackEndOutput.txt)
 - ### [main.py](main.py)
   Run the previous three files together, following the order [front_end.py](front_end.py) -> [Davis_putnam.py](Davis_Putnam.py) -> [back_end.py](back_end.py).
